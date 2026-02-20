@@ -1,0 +1,18 @@
+# 项目依赖
+# 核心依赖
+freqtrade
+
+# 数据处理
+pandas
+numpy
+scikit-learn
+TA-Lib
+
+# Web界面
+fastapi
+uvicorn
+
+# 其他依赖
+python-telegram-bot
+pycoingecko
+ccxt

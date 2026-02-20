@@ -1,0 +1,25 @@
+{
+  "name": "ai-trading-bot",
+  "version": "1.0.0",
+  "description": "基于Python和Freqtrade实现的AI驱动加密货币交易机器人，专门针对欧易交易所进行优化，可部署在阿里云服务器上，并通过Web界面查看交易数据。",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Lunacub-sty/ai-trading-bot.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Lunacub-sty/ai-trading-bot/issues"
+  },
+  "homepage": "https://github.com/Lunacub-sty/ai-trading-bot#readme",
+  "dependencies": {
+    "autoprefixer": "^10.4.24",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.2.0"
+  }
+}
