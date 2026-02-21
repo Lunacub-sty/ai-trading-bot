@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>分析 - AI交易机器人</title>
+    <!-- 引入Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- 引入Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 引入组件样式 -->
+    <link rel="stylesheet" href="/components/styles.css">
+    <!-- 配置Tailwind CSS -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            200: '#bae6fd',
+                            300: '#7dd3fc',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                        },
+                        dark: {
+                            50: '#f8fafc',
+                            100: '#f1f5f9',
+                            200: '#e2e8f0',
+                            300: '#cbd5e1',
+                            400: '#94a3b8',
+                            500: '#64748b',
+                            600: '#475569',
+                            700: '#334155',
+                            800: '#1e293b',
+                            900: '#0f172a',
+                        },
+                        warm: {
+                            50: '#fff7ed',
+                            100: '#ffedd5',
+                            200: '#fed7aa',
+                            300: '#fdba74',
+                            400: '#fb923c',
+                            500: '#f97316',
+                            600: '#ea580c',
+                            700: '#c2410c',
+                            800: '#9a3412',
+                            900: '#7c2d12',
+                        },
+                    },
+                },
+            }
+        }
+    </script>
+    <!-- 自定义工具类 -->
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .text-shadow {
+                text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            .bg-gradient-light {
+                background: linear-gradient(135deg, #ffffff, #f8f9ff, #e3f2fd, #bbdefb);
+            }
+            .bg-gradient-dark {
+                background: linear-gradient(135deg, #121212, #1e1e30, #252540);
+            }
+            .bg-gradient-warm {
+                background: linear-gradient(135deg, #fffaf0, #ffefd5, #ffe4c4, #f5deb3);
+            }
+        }
+    </style>
+</head>
+<body class="bg-dark-900 text-gray-100">
+    <!-- 主容器 -->
+    <div class="flex h-screen overflow-hidden">
+        <!-- 左侧导航菜单 -->
+        <div class="w-64 bg-dark-800 border-r border-dark-700 flex flex-col">
+            <!-- 品牌标识 -->
+            <div class="p-4 border-b border-dark-700">
+                <h1 class="text-xl font-bold text-green-500 flex items-center">
+                    <i class="fas fa-robot mr-2"></i>
+                    AI Trading Bot
+                </h1>
+            </div>
+            
+            <!-- 导航菜单 -->
+            <nav class="flex-1 overflow-y-auto py-4">
+                <ul>
+                    <li class="px-4 mb-2">
+                        <a href="/" class="flex items-center px-4 py-3 rounded-lg hover:bg-dark-700 transition-colors">
+                            <i class="fas fa-chart-line mr-3 w-5 text-center"></i>
+                            <span>仪表盘</span>
+                        </a>
+                    </li>
+                    <li class="px-4 mb-2">
+                        <a href="/analysis" class="flex items-center px-4 py-3 rounded-lg bg-green-500/20 text-green-500 font-medium">
+                            <i class="fas fa-chart-pie mr-3 w-5 text-center"></i>
+                            <span>分析</span>
+                        </a>
+                    </li>
+                    <li class="px-4 mb-2">
+                        <a href="/" class="flex items-center px-4 py-3 rounded-lg hover:bg-dark-700 transition-colors">
+                            <i class="fas fa-users mr-3 w-5 text-center"></i>
+                            <span>策略管理</span>
+                        </a>
+                    </li>
+                    <li class="px-4 mb-2">
+                        <a href="/config" class="flex items-center px-4 py-3 rounded-lg hover:bg-dark-700 transition-colors">
+                            <i class="fas fa-cog mr-3 w-5 text-center"></i>
+                            <span>配置</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            
+            <!-- 底部设置 -->
+            <div class="p-4 border-t border-dark-700">
+                <a href="/" class="flex items-center px-4 py-3 rounded-lg hover:bg-dark-700 transition-colors">
+                    <i class="fas fa-user mr-3 w-5 text-center"></i>
+                    <span>设置</span>
+                </a>
+            </div>
+        </div>
+        
+        <!-- 主内容区 -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- 顶部导航栏 -->
+            <header class="bg-dark-800 border-b border-dark-700 py-4 px-6">
+                <div class="flex justify-between items-center">
+                    <!-- 搜索框 -->
+                    <div class="relative">
+                        <input type="text" placeholder="搜索..." class="bg-dark-700 border border-dark-600 rounded-lg px-4 py-2 pl-10 focus:outline-none focus:ring-2 focus:ring-green-500 w-64">
+                        <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                    </div>
+                    
+                    <!-- 右侧工具栏 -->
+                    <div class="flex items-center space-x-4">
+                        <button class="bg-dark-700 hover:bg-dark-600 p-2 rounded-full transition-colors">
+                            <i class="fas fa-bell text-gray-400"></i>
+                        </button>
+                        <button class="bg-dark-700 hover:bg-dark-600 p-2 rounded-full transition-colors">
+                            <i class="fas fa-cog text-gray-400"></i>
+                        </button>
+                        <div class="flex items-center">
+                            <img src="https://ui-avatars.com/api/?name=AI+Trader&background=10b981&color=fff" alt="User" class="w-8 h-8 rounded-full mr-2">
+                            <span class="font-medium">AI Trader</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- 内容区 -->
+            <main class="flex-1 overflow-y-auto p-6">
+                <!-- 页面标题 -->
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold">分析</h2>
+                    <p class="text-gray-400">使用AI分析回测报告和交易数据</p>
+                </div>
+                
+                <!-- 分析选项卡 -->
+                <div class="bg-dark-800 border border-dark-700 rounded-xl p-5 hover:shadow-lg hover:shadow-green-500/10 transition-all mb-6">
+                    <!-- 选项卡导航 -->
+                    <div class="flex border-b border-dark-700 mb-6">
+                        <button class="analysis-tab-btn active px-4 py-3 border-b-2 border-green-500 text-green-500 font-medium" data-tab="backtest">
+                            <i class="fas fa-history mr-2"></i>回测分析
+                        </button>
+                        <button class="analysis-tab-btn px-4 py-3 border-b-2 border-transparent hover:text-gray-300 transition-colors" data-tab="performance">
+                            <i class="fas fa-chart-bar mr-2"></i>性能分析
+                        </button>
+                        <button class="analysis-tab-btn px-4 py-3 border-b-2 border-transparent hover:text-gray-300 transition-colors" data-tab="ai-analysis">
+                            <i class="fas fa-brain mr-2"></i>AI分析
+                        </button>
+                    </div>
+                    
+                    <!-- 选项卡内容 -->
+                    <div class="analysis-tab-content">
+                        <!-- 回测分析 -->
+                        <div id="backtest-tab-content" class="tab-content active">
+                            <div class="mb-6">
+                                <h3 class="text-lg font-semibold mb-4">回测报告</h3>
+                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                                    <!-- 回测指标卡片 -->
+                                    <div class="bg-dark-800 border border-dark-700 rounded-xl p-5 hover:shadow-lg hover:shadow-green-500/10 transition-all">
+                                        <div class="flex justify-between items-start mb-4">
+                                            <div>
+                                                <p class="text-gray-400 text-sm">总交易次数</p>
+                                                <h4 class="text-2xl font-bold mt-1">128</h4>
+                                            </div>
+                                            <div class="bg-blue-500/20 p-3 rounded-lg">
+                                                <i class="fas fa-exchange-alt text-blue-500 text-xl"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="bg-dark-800 border border-dark-700 rounded-xl p-5 hover:shadow-lg hover:shadow-green-500/10 transition-all">
+                                        <div class="flex justify-between items-start mb-4">
+                                            <div>
+                                                <p class="text-gray-400 text-sm">胜率</p>
+                                                <h4 class="text-2xl font-bold mt-1">68.3%</h4>
+                                            </div>
+                                            <div class="bg-green-500/20 p-3 rounded-lg">
+                                                <i class="fas fa-percentage text-green-500 text-xl"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="bg-dark-800 border border-dark-700 rounded-xl p-5 hover:shadow-lg hover:shadow-green-500/10 transition-all">
+                                        <div class="flex justify-between items-start mb-4">
+                                            <div>
+                                                <p class="text-gray-400 text-sm">平均收益</p>
+                                                <h4 class="text-2xl font-bold text-green-500 mt-1">+2.45%</h4>
+                                            </div>
+                                            <div class="bg-green-500/20 p-3 rounded-lg">
+                                                <i class="fas fa-chart-line text-green-500 text-xl"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="bg-dark-800 border border-dark-700 rounded-xl p-5 hover:shadow-lg hover:shadow-green-500/10 transition-all">
+                                        <div class="flex justify-between items-start mb-4">
+                                            <div>
+                                                <p class="text-gray-400 text-sm">夏普比率</p>
+                                                <h4 class="text-2xl font-bold mt-1">1.85</h4>
+                                            </div>
+                                            <div class="bg-yellow-500/20 p-3 rounded-lg">
+                                                <i class="fas fa-balance-scale text-yellow-500 text-xl"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- 回测图表 -->
+                                <div class="bg-dark-800 border border-dark-700 rounded-xl p-5 hover:shadow-lg hover:shadow-green-500/10 transition-all mb-6">
+                                    <div class="flex justify-between items-center mb-6">
+                                        <div>
+                                            <h3 class="text-lg font-semibold">权益曲线</h3>
+                                            <p class="text-gray-400 text-sm">回测期间的权益变化</p>
+                                        </div>
+                                    </div>
+                                    <div class="h-80">
+                                        <canvas id="equity-chart"></canvas>
+                                    </div>
+                                </div>
+                                
+                                <!-- 回测详情 -->
+                                <div class="bg-dark-800 border border-dark-700 rounded-xl p-5 hover:shadow-lg hover:shadow-green-500/10 transition-all">
+                                    <div class="flex justify-between items-center mb-6">
+                                        <div>
+                                            <h3 class="text-lg font-semibold">回测详情</h3>
+                                            <p class="text-gray-400 text-sm">交易记录和详细指标</p>
+                                        </div>
+                                    </div>
+                                    <div class="overflow-x-auto">
+                                        <table class="min-w-full divide-y divide-dark-700">
+                                            <thead>
+                                                <tr>
+                                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">交易对</th>
+                                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">类型</th>
+                                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">开仓价格</th>
+                                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">平仓价格</th>
+                                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">收益</th>
+                                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">持续时间</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="divide-y divide-dark-700">
+                                                <tr>
+                                                    <td class="px-6 py-4 whitespace-nowrap">BTC/USDT</td>
+                                                    <td class="px-6 py-4 whitespace-nowrap">
+                                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-500/20 text-green-500">买入</span>
+                                                    </td>
+                                                    <td class="px-6 py-4 whitespace-nowrap">60,000</td>
+                                                    <td class="px-6 py-4 whitespace-nowrap">62,500</td>
+                                                    <td class="px-6 py-4 whitespace-nowrap text-green-500">+4.17%</td>
+                                                    <td class="px-6 py-4 whitespace-nowrap">12小时</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="px-6 py-4 whitespace-nowrap">ETH/USDT</td>
+                                                    <td class="px-6 py-4 whitespace-nowrap">
+                                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-500/20 text-green-500">买入</span>
+                                                    </td>
+                                                    <td class="px-6 py-4 whitespace-nowrap">3,000</td>
+                                                    <td class="px-6 py-4 whitespace-nowrap">3,150</td>
+                                                    <td class="px-6 py-4 whitespace-nowrap text-green-500">+5.00%</td>
+                                                    <td class="px-6 py-4 whitespace-nowrap">8小时</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="px-6 py-4 whitespace-nowrap">BNB/USDT</td>
+                                                    <td class="px-6 py-4 whitespace-nowrap">
+                                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-500/20 text-green-500">买入</span>
+                                                    </td>
+                                                    <td class="px-6 py-4 whitespace-nowrap">300</td>
+                                                    <td class="px-6 py-4 whitespace-nowrap">290</td>
+                                                    <td class="px-6 py-4 whitespace-nowrap text-red-500">-3.33%</td>
+                                                    <td class="px-6 py-4 whitespace-nowrap">4小时</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- 性能分析 -->
+                        <div id="performance-tab-content" class="tab-content hidden">
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                <!-- 性能指标 -->
+                                <div class="bg-dark-800 border border-dark-700 rounded-xl p-5 hover:shadow-lg hover:shadow-green-500/10 transition-all">
+                                    <h3 class="text-lg font-semibold mb-4">性能指标</h3>
+                                    <div class="space-y-4">
+                                        <div>
+                                            <div class="flex justify-between mb-1">
+                                                <span class="text-sm text-gray-400">最大回撤</span>
+                                                <span class="text-sm font-medium">5.2%</span>
+                                            </div>
+                                            <div class="w-full bg-dark-700 rounded-full h-2">
+                                                <div class="bg-red-500 h-2 rounded-full" style="width: 52%"></div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="flex justify-between mb-1">
+                                                <span class="text-sm text-gray-400">盈利因子</span>
+                                                <span class="text-sm font-medium">1.8</span>
+                                            </div>
+                                            <div class="w-full bg-dark-700 rounded-full h-2">
+                                                <div class="bg-green-500 h-2 rounded-full" style="width: 80%"></div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="flex justify-between mb-1">
+                                                <span class="text-sm text-gray-400">收益/风险比</span>
+                                                <span class="text-sm font-medium">1.5</span>
+                                            </div>
+                                            <div class="w-full bg-dark-700 rounded-full h-2">
+                                                <div class="bg-blue-500 h-2 rounded-full" style="width: 75%"></div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="flex justify-between mb-1">
+                                                <span class="text-sm text-gray-400">平均持仓时间</span>
+                                                <span class="text-sm font-medium">6.5小时</span>
+                                            </div>
+                                            <div class="w-full bg-dark-700 rounded-full h-2">
+                                                <div class="bg-yellow-500 h-2 rounded-full" style="width: 65%"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- 月度收益 -->
+                                <div class="bg-dark-800 border border-dark-700 rounded-xl p-5 hover:shadow-lg hover:shadow-green-500/10 transition-all">
+                                    <h3 class="text-lg font-semibold mb-4">月度收益</h3>
+                                    <div class="h-80">
+                                        <canvas id="monthly-chart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- AI分析 -->
+                        <div id="ai-analysis-tab-content" class="tab-content hidden">
+                            <div class="bg-dark-800 border border-dark-700 rounded-xl p-5 hover:shadow-lg hover:shadow-green-500/10 transition-all mb-6">
+                                <h3 class="text-lg font-semibold mb-4">AI回测报告分析</h3>
+                                <p class="text-gray-400 mb-6">上传回测报告或使用当前回测数据进行AI分析，获取智能洞察和优化建议。</p>
+                                
+                                <!-- 上传区域 -->
+                                <div class="border-2 border-dashed border-dark-700 rounded-lg p-8 text-center mb-6">
+                                    <i class="fas fa-file-upload text-4xl text-gray-500 mb-4"></i>
+                                    <p class="text-gray-400 mb-4">拖放回测报告文件到此处，或点击上传</p>
+                                    <button class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+                                        <i class="fas fa-upload mr-2"></i>上传回测报告
+                                    </button>
+                                    <p class="text-gray-500 text-sm mt-2">支持 .json, .csv, .txt 格式</p>
+                                </div>
+                                
+                                <!-- 分析按钮 -->
+                                <div class="flex justify-center mb-6">
+                                    <button id="analyze-btn" class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center">
+                                        <i class="fas fa-brain mr-2"></i>使用AI分析当前回测数据
+                                    </button>
+                                </div>
+                                
+                                <!-- 分析结果 -->
+                                <div id="analysis-result" class="bg-dark-700/50 rounded-lg p-6 hidden">
+                                    <h4 class="text-lg font-semibold mb-4 flex items-center">
+                                        <i class="fas fa-lightbulb text-yellow-500 mr-2"></i>
+                                        AI分析结果
+                                    </h4>
+                                    <div class="space-y-4">
+                                        <div>
+                                            <h5 class="font-medium text-green-500 mb-2">策略优势</h5>
+                                            <ul class="list-disc list-inside text-gray-300 space-y-1">
+                                                <li>胜率高于市场平均水平，达到68.3%</li>
+                                                <li>夏普比率为1.85，表明风险调整后的收益表现良好</li>
+                                                <li>盈利因子为1.8，显示策略具有较强的盈利能力</li>
+                                            </ul>
+                                        </div>
+                                        <div>
+                                            <h5 class="font-medium text-yellow-500 mb-2">改进建议</h5>
+                                            <ul class="list-disc list-inside text-gray-300 space-y-1">
+                                                <li>最大回撤为5.2%，建议设置更严格的止损策略</li>
+                                                <li>平均持仓时间为6.5小时，可考虑优化出场时机</li>
+                                                <li>针对BNB/USDT等波动较大的币种，建议调整策略参数</li>
+                                            </ul>
+                                        </div>
+                                        <div>
+                                            <h5 class="font-medium text-blue-500 mb-2">市场洞察</h5>
+                                            <ul class="list-disc list-inside text-gray-300 space-y-1">
+                                                <li>BTC/USDT在12小时周期内表现最佳，建议增加对该周期的关注</li>
+                                                <li>ETH/USDT的平均收益最高，达到5.0%，建议增加配置比例</li>
+                                                <li>市场 volatility 较低时，策略表现更佳，建议在高波动期减少交易频率</li>
+                                            </ul>
+                                        </div>
+                                        <div>
+                                            <h5 class="font-medium text-purple-500 mb-2">参数优化建议</h5>
+                                            <ul class="list-disc list-inside text-gray-300 space-y-1">
+                                                <li>RSI周期调整为12，可提高信号准确性</li>
+                                                <li>移动平均线参数调整为MA7/MA21，可获得更好的趋势识别</li>
+                                                <li>止损设置调整为-2.5%，可减少单次损失</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        // 标签页切换功能
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabBtns = document.querySelectorAll('.analysis-tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    
+                    // 更新按钮状态
+                    tabBtns.forEach(b => {
+                        b.classList.remove('active', 'border-green-500', 'text-green-500');
+                        b.classList.add('border-transparent', 'hover:text-gray-300');
+                    });
+                    this.classList.add('active', 'border-green-500', 'text-green-500');
+                    this.classList.remove('border-transparent', 'hover:text-gray-300');
+                    
+                    // 更新内容显示
+                    tabContents.forEach(content => {
+                        content.classList.add('hidden');
+                        content.classList.remove('active');
+                    });
+                    document.getElementById(`${tabId}-tab-content`).classList.remove('hidden');
+                    document.getElementById(`${tabId}-tab-content`).classList.add('active');
+                });
+            });
+            
+            // 初始化权益曲线图表
+            function initEquityChart() {
+                const ctx = document.getElementById('equity-chart').getContext('2d');
+                
+                // 生成模拟数据
+                const labels = Array.from({length: 30}, (_, i) => `Day ${i+1}`);
+                let equity = [10000];
+                for (let i = 1; i < 30; i++) {
+                    const change = (Math.random() - 0.45) * 200;
+                    equity.push(equity[i-1] + change);
+                }
+                
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            {
+                                label: '权益',
+                                data: equity,
+                                borderColor: '#10b981',
+                                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                                borderWidth: 2,
+                                fill: true,
+                                tension: 0.1
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                                labels: {
+                                    color: '#e5e7eb'
+                                }
+                            },
+                            tooltip: {
+                                mode: 'index',
+                                intersect: false,
+                                backgroundColor: 'rgba(31, 41, 55, 0.9)',
+                                titleColor: '#ffffff',
+                                bodyColor: '#e5e7eb',
+                                borderColor: '#4b5563',
+                                borderWidth: 1
+                            }
+                        },
+                        scales: {
+                            x: {
+                                display: true,
+                                title: {
+                                    display: true,
+                                    text: '时间',
+                                    color: '#9ca3af'
+                                },
+                                ticks: {
+                                    color: '#9ca3af',
+                                    maxTicksLimit: 10
+                                },
+                                grid: {
+                                    color: 'rgba(75, 85, 99, 0.2)'
+                                }
+                            },
+                            y: {
+                                display: true,
+                                title: {
+                                    display: true,
+                                    text: '权益 (USDT)',
+                                    color: '#9ca3af'
+                                },
+                                ticks: {
+                                    color: '#9ca3af'
+                                },
+                                grid: {
+                                    color: 'rgba(75, 85, 99, 0.2)'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // 初始化月度收益图表
+            function initMonthlyChart() {
+                const ctx = document.getElementById('monthly-chart').getContext('2d');
+                
+                // 生成模拟数据
+                const labels = ['1月', '2月', '3月', '4月', '5月', '6月'];
+                const data = [2.5, 4.2, -1.8, 3.5, 5.2, 2.8];
+                
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            {
+                                label: '月度收益 (%)',
+                                data: data,
+                                backgroundColor: data.map(value => value >= 0 ? '#10b981' : '#ef4444'),
+                                borderColor: data.map(value => value >= 0 ? '#10b981' : '#ef4444'),
+                                borderWidth: 1
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(31, 41, 55, 0.9)',
+                                titleColor: '#ffffff',
+                                bodyColor: '#e5e7eb',
+                                borderColor: '#4b5563',
+                                borderWidth: 1
+                            }
+                        },
+                        scales: {
+                            x: {
+                                display: true,
+                                grid: {
+                                    color: 'rgba(75, 85, 99, 0.2)'
+                                },
+                                ticks: {
+                                    color: '#9ca3af'
+                                }
+                            },
+                            y: {
+                                display: true,
+                                title: {
+                                    display: true,
+                                    text: '收益 (%)',
+                                    color: '#9ca3af'
+                                },
+                                grid: {
+                                    color: 'rgba(75, 85, 99, 0.2)'
+                                },
+                                ticks: {
+                                    color: '#9ca3af'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // AI分析按钮点击事件
+            const analyzeBtn = document.getElementById('analyze-btn');
+            const analysisResult = document.getElementById('analysis-result');
+            
+            if (analyzeBtn) {
+                analyzeBtn.addEventListener('click', function() {
+                    // 显示加载状态
+                    this.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>分析中...';
+                    this.disabled = true;
+                    
+                    // 模拟分析过程
+                    setTimeout(() => {
+                        // 恢复按钮状态
+                        this.innerHTML = '<i class="fas fa-brain mr-2"></i>使用AI分析当前回测数据';
+                        this.disabled = false;
+                        
+                        // 显示分析结果
+                        analysisResult.classList.remove('hidden');
+                    }, 2000);
+                });
+            }
+            
+            // 初始化图表
+            initEquityChart();
+            initMonthlyChart();
+        });
+    </script>
+</body>
+</html>

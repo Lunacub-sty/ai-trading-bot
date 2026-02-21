@@ -78,363 +78,436 @@
         }
     </style>
 </head>
-<body>
-    <!-- 主题切换器容器 -->
-    <div id="theme-switcher-container"></div>
-    
-    <!-- 导航栏容器 -->
-    <div id="header-container"></div>
+<body class="bg-dark-900 text-gray-100">
+    <!-- 主容器 -->
+    <div class="flex h-screen overflow-hidden">
+        <!-- 左侧导航菜单 -->
+        <div class="w-64 bg-dark-800 border-r border-dark-700 flex flex-col">
+            <!-- 品牌标识 -->
+            <div class="p-4 border-b border-dark-700">
+                <h1 class="text-xl font-bold text-green-500 flex items-center">
+                    <i class="fas fa-robot mr-2"></i>
+                    AI Trading Bot
+                </h1>
+            </div>
+            
+            <!-- 导航菜单 -->
+            <nav class="flex-1 overflow-y-auto py-4">
+                <ul>
+                    <li class="px-4 mb-2">
+                        <a href="/" class="flex items-center px-4 py-3 rounded-lg hover:bg-dark-700 transition-colors">
+                            <i class="fas fa-chart-line mr-3 w-5 text-center"></i>
+                            <span>仪表盘</span>
+                        </a>
+                    </li>
+                    <li class="px-4 mb-2">
+                        <a href="/" class="flex items-center px-4 py-3 rounded-lg hover:bg-dark-700 transition-colors">
+                            <i class="fas fa-chart-pie mr-3 w-5 text-center"></i>
+                            <span>分析</span>
+                        </a>
+                    </li>
+                    <li class="px-4 mb-2">
+                        <a href="/" class="flex items-center px-4 py-3 rounded-lg hover:bg-dark-700 transition-colors">
+                            <i class="fas fa-users mr-3 w-5 text-center"></i>
+                            <span>策略管理</span>
+                        </a>
+                    </li>
+                    <li class="px-4 mb-2">
+                        <a href="/config" class="flex items-center px-4 py-3 rounded-lg bg-green-500/20 text-green-500 font-medium">
+                            <i class="fas fa-cog mr-3 w-5 text-center"></i>
+                            <span>配置</span>
+                        </a>
+                    </li>
 
-    <div class="container mb-4">
-        <h1 class="mb-5">
-            <i class="fas fa-sliders-h mr-2"></i>配置管理
-        </h1>
+                </ul>
+            </nav>
+            
+            <!-- 底部设置 -->
+            <div class="p-4 border-t border-dark-700">
+                <a href="/" class="flex items-center px-4 py-3 rounded-lg hover:bg-dark-700 transition-colors">
+                    <i class="fas fa-user mr-3 w-5 text-center"></i>
+                    <span>设置</span>
+                </a>
+            </div>
+        </div>
         
-        <!-- 配置标签页 -->
-        <ul class="nav nav-tabs" id="config-tabs" role="tablist">
-            <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="api-tab" data-bs-toggle="tab" data-bs-target="#api" type="button" role="tab">欧意API配置</button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="bot-tab" data-bs-toggle="tab" data-bs-target="#bot" type="button" role="tab">机器人配置</button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="strategy-tab" data-bs-toggle="tab" data-bs-target="#strategy" type="button" role="tab">策略配置</button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="notification-tab" data-bs-toggle="tab" data-bs-target="#notification" type="button" role="tab">通知配置</button>
-            </li>
-        </ul>
-        
-        <div class="tab-content" id="config-tab-content">
-            <!-- 欧意API配置 -->
-            <div class="tab-pane fade show active" id="api" role="tabpanel">
-                <div class="card">
-                    <div class="card-header">
-                        <i class="fas fa-key mr-2"></i>欧意API配置
+        <!-- 主内容区 -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- 顶部导航栏 -->
+            <header class="bg-dark-800 border-b border-dark-700 py-4 px-6">
+                <div class="flex justify-between items-center">
+                    <!-- 搜索框 -->
+                    <div class="relative">
+                        <input type="text" placeholder="搜索..." class="bg-dark-700 border border-dark-600 rounded-lg px-4 py-2 pl-10 focus:outline-none focus:ring-2 focus:ring-green-500 w-64">
+                        <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
                     </div>
-                    <div class="card-body">
-                        <form id="api-form">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="form-label" for="api-key">API Key</label>
-                                        <input type="text" class="form-control" id="api-key" placeholder="输入你的API Key">
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="form-label" for="api-secret">API Secret</label>
-                                        <input type="password" class="form-control" id="api-secret" placeholder="输入你的API Secret">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="form-label" for="api-passphrase">Passphrase</label>
-                                        <input type="password" class="form-control" id="api-passphrase" placeholder="输入你的Passphrase">
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="form-label" for="api-environment">环境</label>
-                                        <select class="form-control" id="api-environment">
-                                            <option value="production">生产环境</option>
-                                            <option value="sandbox">测试环境</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="mt-4">
-                                <button type="button" class="btn btn-primary" id="test-api">
-                                    <i class="fas fa-check-circle mr-2"></i>测试连接
-                                </button>
-                                <button type="button" class="btn btn-secondary ml-2" id="save-api">
-                                    <i class="fas fa-save mr-2"></i>保存配置
-                                </button>
-                            </div>
-                        </form>
+                    
+                    <!-- 右侧工具栏 -->
+                    <div class="flex items-center space-x-4">
+                        <button class="bg-dark-700 hover:bg-dark-600 p-2 rounded-full transition-colors">
+                            <i class="fas fa-bell text-gray-400"></i>
+                        </button>
+                        <button class="bg-dark-700 hover:bg-dark-600 p-2 rounded-full transition-colors">
+                            <i class="fas fa-cog text-gray-400"></i>
+                        </button>
+                        <div class="flex items-center">
+                            <img src="https://ui-avatars.com/api/?name=AI+Trader&background=10b981&color=fff" alt="User" class="w-8 h-8 rounded-full mr-2">
+                            <span class="font-medium">AI Trader</span>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </header>
             
-            <!-- 机器人配置 -->
-            <div class="tab-pane fade" id="bot" role="tabpanel">
-                <div class="card">
-                    <div class="card-header">
-                        <i class="fas fa-robot mr-2"></i>机器人配置
-                    </div>
-                    <div class="card-body">
-                        <form id="bot-form">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="form-label" for="max-open-trades">最大开仓数量</label>
-                                        <input type="number" class="form-control" id="max-open-trades" value="3" min="1">
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="form-label" for="stake-currency">基础货币</label>
-                                        <input type="text" class="form-control" id="stake-currency" value="USDT">
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="form-label" for="stake-amount">单次交易金额</label>
-                                        <input type="number" class="form-control" id="stake-amount" value="100" min="1">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="form-label" for="timeframe">时间周期</label>
-                                        <select class="form-control" id="timeframe">
-                                            <option value="1m">1分钟</option>
-                                            <option value="5m" selected>5分钟</option>
-                                            <option value="15m">15分钟</option>
-                                            <option value="1h">1小时</option>
-                                            <option value="4h">4小时</option>
-                                            <option value="1d">1天</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="form-label" for="stoploss">止损设置 (%)</label>
-                                        <input type="number" class="form-control" id="stoploss" value="-3" step="0.1">
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="form-label" for="trailing-stop">追踪止损</label>
-                                        <input type="checkbox" class="form-check-input" id="trailing-stop" checked>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="mt-4">
-                                <button type="button" class="btn btn-primary" id="save-bot">
-                                    <i class="fas fa-save mr-2"></i>保存配置
-                                </button>
-                            </div>
-                        </form>
-                    </div>
+            <!-- 内容区 -->
+            <main class="flex-1 overflow-y-auto p-6">
+                <!-- 页面标题 -->
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold">配置管理</h2>
+                    <p class="text-gray-400">管理您的交易机器人配置</p>
                 </div>
-            </div>
-            
-            <!-- 策略配置 -->
-            <div class="tab-pane fade" id="strategy" role="tabpanel">
-                <div class="card">
-                    <div class="card-header">
-                        <i class="fas fa-brain mr-2"></i>策略配置
+                
+                <!-- 配置标签页 -->
+                <div class="bg-dark-800 border border-dark-700 rounded-xl p-5 hover:shadow-lg hover:shadow-green-500/10 transition-all mb-6">
+                    <!-- 标签页导航 -->
+                    <div class="flex border-b border-dark-700 mb-6">
+                        <button class="config-tab-btn active px-4 py-3 border-b-2 border-green-500 text-green-500 font-medium" data-tab="api">
+                            <i class="fas fa-key mr-2"></i>欧意API配置
+                        </button>
+                        <button class="config-tab-btn px-4 py-3 border-b-2 border-transparent hover:text-gray-300 transition-colors" data-tab="bot">
+                            <i class="fas fa-robot mr-2"></i>机器人配置
+                        </button>
+                        <button class="config-tab-btn px-4 py-3 border-b-2 border-transparent hover:text-gray-300 transition-colors" data-tab="strategy">
+                            <i class="fas fa-brain mr-2"></i>策略配置
+                        </button>
+                        <button class="config-tab-btn px-4 py-3 border-b-2 border-transparent hover:text-gray-300 transition-colors" data-tab="notification">
+                            <i class="fas fa-bell mr-2"></i>通知配置
+                        </button>
                     </div>
-                    <div class="card-body">
-                        <form id="strategy-form">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="form-label" for="strategy-name">策略名称</label>
-                                        <input type="text" class="form-control" id="strategy-name" value="AI_Strategy">
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="form-label" for="rsi-period">RSI周期</label>
-                                        <input type="number" class="form-control" id="rsi-period" value="14" min="1">
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="form-label" for="rsi-lower">RSI超卖阈值</label>
-                                        <input type="number" class="form-control" id="rsi-lower" value="30" min="1" max="100">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="form-label" for="rsi-upper">RSI超买阈值</label>
-                                        <input type="number" class="form-control" id="rsi-upper" value="70" min="1" max="100">
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="form-label" for="ma-short">短期MA周期</label>
-                                        <input type="number" class="form-control" id="ma-short" value="5" min="1">
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="form-label" for="ma-long">长期MA周期</label>
-                                        <input type="number" class="form-control" id="ma-long" value="20" min="1">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="mt-4">
-                                <button type="button" class="btn btn-primary" id="save-strategy">
-                                    <i class="fas fa-save mr-2"></i>保存配置
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- 通知配置 -->
-            <div class="tab-pane fade" id="notification" role="tabpanel">
-                <div class="card">
-                    <div class="card-header">
-                        <i class="fas fa-bell mr-2"></i>通知配置
-                    </div>
-                    <div class="card-body">
-                        <form id="notification-form">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="form-label" for="telegram-bot-id">Telegram Bot ID</label>
-                                        <input type="text" class="form-control" id="telegram-bot-id" placeholder="输入Telegram Bot ID">
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="form-label" for="telegram-chat-id">Telegram Chat ID</label>
-                                        <input type="text" class="form-control" id="telegram-chat-id" placeholder="输入Telegram Chat ID">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="form-label">通知类型</label>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="notify-trades" checked>
-                                            <label class="form-check-label" for="notify-trades">交易通知</label>
+                    
+                    <!-- 标签页内容 -->
+                    <div class="config-tab-content">
+                        <!-- 欧意API配置 -->
+                        <div id="api-tab-content" class="tab-content active">
+                            <form id="api-form">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <div class="mb-4">
+                                            <label for="api-key" class="block text-sm font-medium text-gray-300 mb-2">API Key</label>
+                                            <input type="text" id="api-key" placeholder="输入你的API Key" class="w-full bg-dark-700 border border-dark-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500">
                                         </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="notify-alerts" checked>
-                                            <label class="form-check-label" for="notify-alerts">警报通知</label>
+                                        <div class="mb-4">
+                                            <label for="api-secret" class="block text-sm font-medium text-gray-300 mb-2">API Secret</label>
+                                            <input type="password" id="api-secret" placeholder="输入你的API Secret" class="w-full bg-dark-700 border border-dark-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500">
                                         </div>
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="notify-status">
-                                            <label class="form-check-label" for="notify-status">状态通知</label>
+                                    </div>
+                                    <div>
+                                        <div class="mb-4">
+                                            <label for="api-passphrase" class="block text-sm font-medium text-gray-300 mb-2">Passphrase</label>
+                                            <input type="password" id="api-passphrase" placeholder="输入你的Passphrase" class="w-full bg-dark-700 border border-dark-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500">
+                                        </div>
+                                        <div class="mb-4">
+                                            <label for="api-environment" class="block text-sm font-medium text-gray-300 mb-2">环境</label>
+                                            <select id="api-environment" class="w-full bg-dark-700 border border-dark-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500">
+                                                <option value="production">生产环境</option>
+                                                <option value="sandbox">测试环境</option>
+                                            </select>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="mt-4">
-                                <button type="button" class="btn btn-primary" id="save-notification">
-                                    <i class="fas fa-save mr-2"></i>保存配置
-                                </button>
-                            </div>
-                        </form>
+                                <div class="mt-6 flex space-x-4">
+                                    <button type="button" id="test-api" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center">
+                                        <i class="fas fa-check-circle mr-2"></i>测试连接
+                                    </button>
+                                    <button type="button" id="save-api" class="bg-dark-700 hover:bg-dark-600 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center">
+                                        <i class="fas fa-save mr-2"></i>保存配置
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        
+                        <!-- 机器人配置 -->
+                        <div id="bot-tab-content" class="tab-content hidden">
+                            <form id="bot-form">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <div class="mb-4">
+                                            <label for="max-open-trades" class="block text-sm font-medium text-gray-300 mb-2">最大开仓数量</label>
+                                            <input type="number" id="max-open-trades" value="3" min="1" class="w-full bg-dark-700 border border-dark-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500">
+                                        </div>
+                                        <div class="mb-4">
+                                            <label for="stake-currency" class="block text-sm font-medium text-gray-300 mb-2">基础货币</label>
+                                            <input type="text" id="stake-currency" value="USDT" class="w-full bg-dark-700 border border-dark-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500">
+                                        </div>
+                                        <div class="mb-4">
+                                            <label for="stake-amount" class="block text-sm font-medium text-gray-300 mb-2">单次交易金额</label>
+                                            <input type="number" id="stake-amount" value="100" min="1" class="w-full bg-dark-700 border border-dark-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="mb-4">
+                                            <label for="timeframe" class="block text-sm font-medium text-gray-300 mb-2">时间周期</label>
+                                            <select id="timeframe" class="w-full bg-dark-700 border border-dark-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500">
+                                                <option value="1m">1分钟</option>
+                                                <option value="5m" selected>5分钟</option>
+                                                <option value="15m">15分钟</option>
+                                                <option value="1h">1小时</option>
+                                                <option value="4h">4小时</option>
+                                                <option value="1d">1天</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-4">
+                                            <label for="stoploss" class="block text-sm font-medium text-gray-300 mb-2">止损设置 (%)</label>
+                                            <input type="number" id="stoploss" value="-3" step="0.1" class="w-full bg-dark-700 border border-dark-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500">
+                                        </div>
+                                        <div class="mb-4">
+                                            <label class="flex items-center">
+                                                <input type="checkbox" id="trailing-stop" checked class="w-4 h-4 text-green-500 bg-dark-700 border-dark-600 rounded focus:ring-green-500">
+                                                <span class="ml-2 block text-sm font-medium text-gray-300">追踪止损</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mt-6">
+                                    <button type="button" id="save-bot" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center">
+                                        <i class="fas fa-save mr-2"></i>保存配置
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        
+                        <!-- 策略配置 -->
+                        <div id="strategy-tab-content" class="tab-content hidden">
+                            <form id="strategy-form">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <div class="mb-4">
+                                            <label for="strategy-name" class="block text-sm font-medium text-gray-300 mb-2">策略名称</label>
+                                            <input type="text" id="strategy-name" value="AI_Strategy" class="w-full bg-dark-700 border border-dark-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500">
+                                        </div>
+                                        <div class="mb-4">
+                                            <label for="rsi-period" class="block text-sm font-medium text-gray-300 mb-2">RSI周期</label>
+                                            <input type="number" id="rsi-period" value="14" min="1" class="w-full bg-dark-700 border border-dark-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500">
+                                        </div>
+                                        <div class="mb-4">
+                                            <label for="rsi-lower" class="block text-sm font-medium text-gray-300 mb-2">RSI超卖阈值</label>
+                                            <input type="number" id="rsi-lower" value="30" min="1" max="100" class="w-full bg-dark-700 border border-dark-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="mb-4">
+                                            <label for="rsi-upper" class="block text-sm font-medium text-gray-300 mb-2">RSI超买阈值</label>
+                                            <input type="number" id="rsi-upper" value="70" min="1" max="100" class="w-full bg-dark-700 border border-dark-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500">
+                                        </div>
+                                        <div class="mb-4">
+                                            <label for="ma-short" class="block text-sm font-medium text-gray-300 mb-2">短期MA周期</label>
+                                            <input type="number" id="ma-short" value="5" min="1" class="w-full bg-dark-700 border border-dark-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500">
+                                        </div>
+                                        <div class="mb-4">
+                                            <label for="ma-long" class="block text-sm font-medium text-gray-300 mb-2">长期MA周期</label>
+                                            <input type="number" id="ma-long" value="20" min="1" class="w-full bg-dark-700 border border-dark-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mt-6">
+                                    <button type="button" id="save-strategy" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center">
+                                        <i class="fas fa-save mr-2"></i>保存配置
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        
+                        <!-- 通知配置 -->
+                        <div id="notification-tab-content" class="tab-content hidden">
+                            <form id="notification-form">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <div class="mb-4">
+                                            <label for="telegram-bot-id" class="block text-sm font-medium text-gray-300 mb-2">Telegram Bot ID</label>
+                                            <input type="text" id="telegram-bot-id" placeholder="输入Telegram Bot ID" class="w-full bg-dark-700 border border-dark-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500">
+                                        </div>
+                                        <div class="mb-4">
+                                            <label for="telegram-chat-id" class="block text-sm font-medium text-gray-300 mb-2">Telegram Chat ID</label>
+                                            <input type="text" id="telegram-chat-id" placeholder="输入Telegram Chat ID" class="w-full bg-dark-700 border border-dark-600 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="mb-4">
+                                            <label class="block text-sm font-medium text-gray-300 mb-2">通知类型</label>
+                                            <div class="space-y-2">
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" id="notify-trades" checked class="w-4 h-4 text-green-500 bg-dark-700 border-dark-600 rounded focus:ring-green-500">
+                                                    <span class="ml-2 block text-sm font-medium text-gray-300">交易通知</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" id="notify-alerts" checked class="w-4 h-4 text-green-500 bg-dark-700 border-dark-600 rounded focus:ring-green-500">
+                                                    <span class="ml-2 block text-sm font-medium text-gray-300">警报通知</span>
+                                                </label>
+                                                <label class="flex items-center">
+                                                    <input type="checkbox" id="notify-status" class="w-4 h-4 text-green-500 bg-dark-700 border-dark-600 rounded focus:ring-green-500">
+                                                    <span class="ml-2 block text-sm font-medium text-gray-300">状态通知</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mt-6">
+                                    <button type="button" id="save-notification" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center">
+                                        <i class="fas fa-save mr-2"></i>保存配置
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </main>
         </div>
     </div>
 
-    <!-- 页脚容器 -->
-    <div id="footer-container"></div>
-
-    <!-- 引入Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- 引入组件脚本 -->
-    <script src="/components/scripts.js"></script>
     <script>
-        // 保存配置功能
-        function initConfigForms() {
-            // 保存API配置
-            document.getElementById('save-api').addEventListener('click', function() {
-                const apiKey = document.getElementById('api-key').value;
-                const apiSecret = document.getElementById('api-secret').value;
-                const apiPassphrase = document.getElementById('api-passphrase').value;
-                const apiEnvironment = document.getElementById('api-environment').value;
-                
-                // 保存到本地存储
-                localStorage.setItem('okx_api_key', apiKey);
-                localStorage.setItem('okx_api_secret', apiSecret);
-                localStorage.setItem('okx_api_passphrase', apiPassphrase);
-                localStorage.setItem('okx_api_environment', apiEnvironment);
-                
-                alert('API配置已保存');
-            });
-            
-            // 测试API连接
-            document.getElementById('test-api').addEventListener('click', function() {
-                alert('正在测试API连接...');
-                // 这里可以添加实际的API测试逻辑
-                setTimeout(() => {
-                    alert('API连接测试成功！');
-                }, 1000);
-            });
-            
-            // 保存机器人配置
-            document.getElementById('save-bot').addEventListener('click', function() {
-                const maxOpenTrades = document.getElementById('max-open-trades').value;
-                const stakeCurrency = document.getElementById('stake-currency').value;
-                const stakeAmount = document.getElementById('stake-amount').value;
-                const timeframe = document.getElementById('timeframe').value;
-                const stoploss = document.getElementById('stoploss').value;
-                const trailingStop = document.getElementById('trailing-stop').checked;
-                
-                // 保存到本地存储
-                localStorage.setItem('bot_max_open_trades', maxOpenTrades);
-                localStorage.setItem('bot_stake_currency', stakeCurrency);
-                localStorage.setItem('bot_stake_amount', stakeAmount);
-                localStorage.setItem('bot_timeframe', timeframe);
-                localStorage.setItem('bot_stoploss', stoploss);
-                localStorage.setItem('bot_trailing_stop', trailingStop);
-                
-                alert('机器人配置已保存');
-            });
-            
-            // 保存策略配置
-            document.getElementById('save-strategy').addEventListener('click', function() {
-                const strategyName = document.getElementById('strategy-name').value;
-                const rsiPeriod = document.getElementById('rsi-period').value;
-                const rsiLower = document.getElementById('rsi-lower').value;
-                const rsiUpper = document.getElementById('rsi-upper').value;
-                const maShort = document.getElementById('ma-short').value;
-                const maLong = document.getElementById('ma-long').value;
-                
-                // 保存到本地存储
-                localStorage.setItem('strategy_name', strategyName);
-                localStorage.setItem('strategy_rsi_period', rsiPeriod);
-                localStorage.setItem('strategy_rsi_lower', rsiLower);
-                localStorage.setItem('strategy_rsi_upper', rsiUpper);
-                localStorage.setItem('strategy_ma_short', maShort);
-                localStorage.setItem('strategy_ma_long', maLong);
-                
-                alert('策略配置已保存');
-            });
-            
-            // 保存通知配置
-            document.getElementById('save-notification').addEventListener('click', function() {
-                const telegramBotId = document.getElementById('telegram-bot-id').value;
-                const telegramChatId = document.getElementById('telegram-chat-id').value;
-                const notifyTrades = document.getElementById('notify-trades').checked;
-                const notifyAlerts = document.getElementById('notify-alerts').checked;
-                const notifyStatus = document.getElementById('notify-status').checked;
-                
-                // 保存到本地存储
-                localStorage.setItem('notification_telegram_bot_id', telegramBotId);
-                localStorage.setItem('notification_telegram_chat_id', telegramChatId);
-                localStorage.setItem('notification_trades', notifyTrades);
-                localStorage.setItem('notification_alerts', notifyAlerts);
-                localStorage.setItem('notification_status', notifyStatus);
-                
-                alert('通知配置已保存');
-            });
-        }
-        
-        // 加载保存的配置
-        function loadSavedConfig() {
-            // 加载API配置
-            document.getElementById('api-key').value = localStorage.getItem('okx_api_key') || '';
-            document.getElementById('api-secret').value = localStorage.getItem('okx_api_secret') || '';
-            document.getElementById('api-passphrase').value = localStorage.getItem('okx_api_passphrase') || '';
-            document.getElementById('api-environment').value = localStorage.getItem('okx_api_environment') || 'production';
-            
-            // 加载机器人配置
-            document.getElementById('max-open-trades').value = localStorage.getItem('bot_max_open_trades') || '3';
-            document.getElementById('stake-currency').value = localStorage.getItem('bot_stake_currency') || 'USDT';
-            document.getElementById('stake-amount').value = localStorage.getItem('bot_stake_amount') || '100';
-            document.getElementById('timeframe').value = localStorage.getItem('bot_timeframe') || '5m';
-            document.getElementById('stoploss').value = localStorage.getItem('bot_stoploss') || '-3';
-            document.getElementById('trailing-stop').checked = localStorage.getItem('bot_trailing_stop') === 'true' || true;
-            
-            // 加载策略配置
-            document.getElementById('strategy-name').value = localStorage.getItem('strategy_name') || 'AI_Strategy';
-            document.getElementById('rsi-period').value = localStorage.getItem('strategy_rsi_period') || '14';
-            document.getElementById('rsi-lower').value = localStorage.getItem('strategy_rsi_lower') || '30';
-            document.getElementById('rsi-upper').value = localStorage.getItem('strategy_rsi_upper') || '70';
-            document.getElementById('ma-short').value = localStorage.getItem('strategy_ma_short') || '5';
-            document.getElementById('ma-long').value = localStorage.getItem('strategy_ma_long') || '20';
-            
-            // 加载通知配置
-            document.getElementById('telegram-bot-id').value = localStorage.getItem('notification_telegram_bot_id') || '';
-            document.getElementById('telegram-chat-id').value = localStorage.getItem('notification_telegram_chat_id') || '';
-            document.getElementById('notify-trades').checked = localStorage.getItem('notification_trades') === 'true' || true;
-            document.getElementById('notify-alerts').checked = localStorage.getItem('notification_alerts') === 'true' || true;
-            document.getElementById('notify-status').checked = localStorage.getItem('notification_status') === 'true' || false;
-        }
-        
-        // 页面加载完成后初始化
+        // 标签页切换功能
         document.addEventListener('DOMContentLoaded', function() {
-            // 初始化组件
-            initComponents();
+            const tabBtns = document.querySelectorAll('.config-tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    
+                    // 更新按钮状态
+                    tabBtns.forEach(b => {
+                        b.classList.remove('active', 'border-green-500', 'text-green-500');
+                        b.classList.add('border-transparent', 'hover:text-gray-300');
+                    });
+                    this.classList.add('active', 'border-green-500', 'text-green-500');
+                    this.classList.remove('border-transparent', 'hover:text-gray-300');
+                    
+                    // 更新内容显示
+                    tabContents.forEach(content => {
+                        content.classList.add('hidden');
+                        content.classList.remove('active');
+                    });
+                    document.getElementById(`${tabId}-tab-content`).classList.remove('hidden');
+                    document.getElementById(`${tabId}-tab-content`).classList.add('active');
+                });
+            });
+            
+            // 保存配置功能
+            function initConfigForms() {
+                // 保存API配置
+                document.getElementById('save-api').addEventListener('click', function() {
+                    const apiKey = document.getElementById('api-key').value;
+                    const apiSecret = document.getElementById('api-secret').value;
+                    const apiPassphrase = document.getElementById('api-passphrase').value;
+                    const apiEnvironment = document.getElementById('api-environment').value;
+                    
+                    // 保存到本地存储
+                    localStorage.setItem('okx_api_key', apiKey);
+                    localStorage.setItem('okx_api_secret', apiSecret);
+                    localStorage.setItem('okx_api_passphrase', apiPassphrase);
+                    localStorage.setItem('okx_api_environment', apiEnvironment);
+                    
+                    alert('API配置已保存');
+                });
+                
+                // 测试API连接
+                document.getElementById('test-api').addEventListener('click', function() {
+                    alert('正在测试API连接...');
+                    // 这里可以添加实际的API测试逻辑
+                    setTimeout(() => {
+                        alert('API连接测试成功！');
+                    }, 1000);
+                });
+                
+                // 保存机器人配置
+                document.getElementById('save-bot').addEventListener('click', function() {
+                    const maxOpenTrades = document.getElementById('max-open-trades').value;
+                    const stakeCurrency = document.getElementById('stake-currency').value;
+                    const stakeAmount = document.getElementById('stake-amount').value;
+                    const timeframe = document.getElementById('timeframe').value;
+                    const stoploss = document.getElementById('stoploss').value;
+                    const trailingStop = document.getElementById('trailing-stop').checked;
+                    
+                    // 保存到本地存储
+                    localStorage.setItem('bot_max_open_trades', maxOpenTrades);
+                    localStorage.setItem('bot_stake_currency', stakeCurrency);
+                    localStorage.setItem('bot_stake_amount', stakeAmount);
+                    localStorage.setItem('bot_timeframe', timeframe);
+                    localStorage.setItem('bot_stoploss', stoploss);
+                    localStorage.setItem('bot_trailing_stop', trailingStop);
+                    
+                    alert('机器人配置已保存');
+                });
+                
+                // 保存策略配置
+                document.getElementById('save-strategy').addEventListener('click', function() {
+                    const strategyName = document.getElementById('strategy-name').value;
+                    const rsiPeriod = document.getElementById('rsi-period').value;
+                    const rsiLower = document.getElementById('rsi-lower').value;
+                    const rsiUpper = document.getElementById('rsi-upper').value;
+                    const maShort = document.getElementById('ma-short').value;
+                    const maLong = document.getElementById('ma-long').value;
+                    
+                    // 保存到本地存储
+                    localStorage.setItem('strategy_name', strategyName);
+                    localStorage.setItem('strategy_rsi_period', rsiPeriod);
+                    localStorage.setItem('strategy_rsi_lower', rsiLower);
+                    localStorage.setItem('strategy_rsi_upper', rsiUpper);
+                    localStorage.setItem('strategy_ma_short', maShort);
+                    localStorage.setItem('strategy_ma_long', maLong);
+                    
+                    alert('策略配置已保存');
+                });
+                
+                // 保存通知配置
+                document.getElementById('save-notification').addEventListener('click', function() {
+                    const telegramBotId = document.getElementById('telegram-bot-id').value;
+                    const telegramChatId = document.getElementById('telegram-chat-id').value;
+                    const notifyTrades = document.getElementById('notify-trades').checked;
+                    const notifyAlerts = document.getElementById('notify-alerts').checked;
+                    const notifyStatus = document.getElementById('notify-status').checked;
+                    
+                    // 保存到本地存储
+                    localStorage.setItem('notification_telegram_bot_id', telegramBotId);
+                    localStorage.setItem('notification_telegram_chat_id', telegramChatId);
+                    localStorage.setItem('notification_trades', notifyTrades);
+                    localStorage.setItem('notification_alerts', notifyAlerts);
+                    localStorage.setItem('notification_status', notifyStatus);
+                    
+                    alert('通知配置已保存');
+                });
+            }
+            
+            // 加载保存的配置
+            function loadSavedConfig() {
+                // 加载API配置
+                document.getElementById('api-key').value = localStorage.getItem('okx_api_key') || '';
+                document.getElementById('api-secret').value = localStorage.getItem('okx_api_secret') || '';
+                document.getElementById('api-passphrase').value = localStorage.getItem('okx_api_passphrase') || '';
+                document.getElementById('api-environment').value = localStorage.getItem('okx_api_environment') || 'production';
+                
+                // 加载机器人配置
+                document.getElementById('max-open-trades').value = localStorage.getItem('bot_max_open_trades') || '3';
+                document.getElementById('stake-currency').value = localStorage.getItem('bot_stake_currency') || 'USDT';
+                document.getElementById('stake-amount').value = localStorage.getItem('bot_stake_amount') || '100';
+                document.getElementById('timeframe').value = localStorage.getItem('bot_timeframe') || '5m';
+                document.getElementById('stoploss').value = localStorage.getItem('bot_stoploss') || '-3';
+                document.getElementById('trailing-stop').checked = localStorage.getItem('bot_trailing_stop') === 'true' || true;
+                
+                // 加载策略配置
+                document.getElementById('strategy-name').value = localStorage.getItem('strategy_name') || 'AI_Strategy';
+                document.getElementById('rsi-period').value = localStorage.getItem('strategy_rsi_period') || '14';
+                document.getElementById('rsi-lower').value = localStorage.getItem('strategy_rsi_lower') || '30';
+                document.getElementById('rsi-upper').value = localStorage.getItem('strategy_rsi_upper') || '70';
+                document.getElementById('ma-short').value = localStorage.getItem('strategy_ma_short') || '5';
+                document.getElementById('ma-long').value = localStorage.getItem('strategy_ma_long') || '20';
+                
+                // 加载通知配置
+                document.getElementById('telegram-bot-id').value = localStorage.getItem('notification_telegram_bot_id') || '';
+                document.getElementById('telegram-chat-id').value = localStorage.getItem('notification_telegram_chat_id') || '';
+                document.getElementById('notify-trades').checked = localStorage.getItem('notification_trades') === 'true' || true;
+                document.getElementById('notify-alerts').checked = localStorage.getItem('notification_alerts') === 'true' || true;
+                document.getElementById('notify-status').checked = localStorage.getItem('notification_status') === 'true' || false;
+            }
             
             // 初始化配置表单
             initConfigForms();
